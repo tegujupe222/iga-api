@@ -1,0 +1,204 @@
+openapi: 3.0.0
+info:
+  title: Tokyo Disney Resort Unofficial API
+  description: 東京ディズニーリゾートの待ち時間情報を提供する非公式API
+  version: 2.0.0
+  contact:
+    name: API Support
+    url: https://github.com/yourusername/disney-api
+servers:
+  - url: https://your-vercel-app.vercel.app
+    description: Production server
+  - url: http://localhost:3000
+    description: Development server
+paths:
+  /:
+    get:
+      summary: API情報
+      description: APIの基本情報とエンドポイント一覧を取得
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "Tokyo Disney Resort Unofficial API"
+                  version:
+                    type: string
+                    example: "2.0.0"
+                  description:
+                    type: string
+                  endpoints:
+                    type: object
+                  timestamp:
+                    type: string
+                    format: date-time
+  /exec:
+    get:
+      summary: パーク情報取得
+      description: 東京ディズニーランド・シーの待ち時間またはFastPass情報を取得
+      parameters:
+        - in: query
+          name: park
+          required: true
+          schema:
+            type: string
+            enum: [land, sea]
+          description: パーク名（land=ディズニーランド、sea=ディズニーシー）
+          example: "land"
+        - in: query
+          name: type
+          required: true
+          schema:
+            type: string
+            enum: [standby, fastpass]
+          description: 情報タイプ（standby=待ち時間、fastpass=FastPass）
+          example: "standby"
+        - in: query
+          name: token
+          required: true
+          schema:
+            type: string
+          description: API認証トークン
+          example: "your-api-token"
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  park:
+                    type: string
+                    example: "land"
+                  type:
+                    type: string
+                    example: "standby"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          example: "スペース・マウンテン"
+                        info:
+                          type: string
+                          example: "45分"
+                        status:
+                          type: string
+                          example: "運営中"
+                  timestamp:
+                    type: string
+                    format: date-time
+                  source:
+                    type: string
+                  version:
+                    type: string
+        '400':
+          description: パラメータエラー
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+        '401':
+          description: 認証エラー
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+        '500':
+          description: サーバーエラー
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+  /health:
+    get:
+      summary: ヘルスチェック
+      description: APIサーバーの健全性を確認
+      responses:
+        '200':
+          description: 正常
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "healthy"
+                  timestamp:
+                    type: string
+                    format: date-time
+                  uptime:
+                    type: number
+                  memory:
+                    type: object
+                  version:
+                    type: string
+                  environment:
+                    type: string
+                  redis:
+                    type: string
+        '503':
+          description: 異常
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "unhealthy"
+                  timestamp:
+                    type: string
+                    format: date-time
+                  error:
+                    type: string
+  /metrics:
+    get:
+      summary: Prometheusメトリクス
+      description: Prometheus形式のメトリクスを取得
+      responses:
+        '200':
+          description: 成功
+          content:
+            text/plain:
+              schema:
+                type: string
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: query
+      name: token
+security:
+  - ApiKeyAuth: []
+tags:
+  - name: API
+    description: API基本情報
+  - name: Data
+    description: パークデータ取得
+  - name: System
+    description: システム情報 

@@ -1,0 +1,8 @@
+{
+  "baseUrl": "https://tokyodisneyresort.info/realtime.php",
+  "endpoints": [
+    {"park":"land","type":"standby","selectorTable":"table.wait-times tbody tr","columns":{"name":"td.name","info":"td.time"}},
+    {"park":"sea","type":"fastpass","selectorTable":"table.fastpass tbody tr","columns":{"name":"td.name","info":"td.fp-time"}}
+  ],
+  "updateSelector": ".update"
+} 

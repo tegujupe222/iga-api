@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  redis:
+    image: redis:6-alpine
+    restart: always
+  scraper:
+    build:
+      context: ./scraper
+    env_file: .env
+    depends_on:
+      - redis
+    command: ["python","cli.py","--cron"]
+  api-server:
+    build:
+      context: ./api-server
+    env_file: .env
+    ports:
+      - 3000:3000
+      - 9100:9100
+    depends_on:
+      - redis 
