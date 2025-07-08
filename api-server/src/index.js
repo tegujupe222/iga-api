@@ -7,6 +7,7 @@ const errorHandler = require('./utils/errorHandler');
 const execRoute = require('./routes/exec');
 const healthRoute = require('./routes/health');
 const metricsRoute = require('./routes/metrics');
+const mapRoute = require('./routes/map');
 
 const app = express();
 const swaggerDocument = yaml.load(fs.readFileSync(__dirname + '/../swagger.yaml', 'utf8'));
@@ -45,6 +46,7 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/exec', execRoute);
 app.use('/health', healthRoute);
 app.use('/metrics', metricsRoute);
+app.use('/map', mapRoute);
 app.use(errorHandler);
 
 const port = process.env.PORT || 3000;
